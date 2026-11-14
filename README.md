@@ -299,5 +299,3 @@ This README blends realtime status signals with animated visuals to feel more li
 · Theme showcase — the 33 preset themes and custom colors are presented as colored badges, making the theme gallery scannable at a glance.
 
 ---
-
-Optimization Tip: You can personalize the badges by replacing hexsleuth and HEXInsta-Downloader in the image URLs with your own GitHub username and repository name.

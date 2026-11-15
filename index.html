@@ -798,7 +798,7 @@ a:hover{text-decoration:underline}
 <body>
 
 <!-- ============================================================
-     HEADER  (GitHub link replaced with Theme picker)
+     HEADER
      ============================================================ -->
 <header class="site-header">
   <div class="brand">
@@ -923,9 +923,8 @@ a:hover{text-decoration:underline}
   <p>Not affiliated with Instagram. Respect creators’ rights.</p>
 </footer>
 
-<!-- FFmpeg.wasm main API (0.12.10) -->
-<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+<!-- FFmpeg.wasm (0.11.6) - Single-threaded, works on GitHub Pages without COOP/COEP headers -->
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
 
 <script>
 (function () {
@@ -1208,22 +1207,6 @@ a:hover{text-decoration:underline}
 
   const JINA_BASE = 'https://r.jina.ai/';
   const REQ_TIMEOUT = 14000;
-
-  /* FFmpeg bundles — classWorkerURL fix for v0.12.x */
-  const FFMPEG_BUNDLES = [
-    {
-      label: 'jsdelivr · ffmpeg@0.12.10 + core@0.12.6',
-      worker:   'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/814.ffmpeg.js',
-      coreJs:   'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
-      coreWasm: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm'
-    },
-    {
-      label: 'unpkg · ffmpeg@0.12.10 + core@0.12.6',
-      worker:   'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/814.ffmpeg.js',
-      coreJs:   'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
-      coreWasm: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm'
-    }
-  ];
 
   const MP3_QUALITIES = [
     { kbps: 96,  label: '96 kbps — speech / low bandwidth' },
@@ -1676,7 +1659,6 @@ a:hover{text-decoration:underline}
            '</div>';
   }
 
-  /* === NEW: build a media thumbnail for the live preview === */
   function buildMediaThumb(media) {
     if (!media) return '';
     const poster = media.thumb || (media.images.length ? media.images[0] : '');
@@ -1736,7 +1718,6 @@ a:hover{text-decoration:underline}
       '</div>' +
       buildMediaThumb(media);
 
-    /* Click on thumb → scroll to result or trigger fetch */
     const thumb = livePreview.querySelector('.live-media-thumb');
     if (thumb) {
       thumb.addEventListener('click', () => {
@@ -2031,58 +2012,51 @@ a:hover{text-decoration:underline}
     updateSelectionCount();
   }
 
-  /* ---------- FFmpeg loader (classWorkerURL fix for v0.12.x) ---------- */
-  async function getFFmpeg() {
+  /* ============================================================
+     FFmpeg LOADING & MP3 CONVERSION (0.11.6 Fix for GitHub Pages)
+     ============================================================ */
+  
+  async function getFFmpeg(onStatus) {
     if (ffmpegInstance) return ffmpegInstance;
     if (ffmpegLoading) return ffmpegLoading;
 
     ffmpegLoading = (async () => {
-      if (typeof FFmpegWASM === 'undefined' || typeof FFmpegUtil === 'undefined') {
-        throw new Error('FFmpeg library did not load (jsdelivr blocked by network or extension).');
+      if (typeof FFmpeg === 'undefined') {
+        throw new Error('FFmpeg library not loaded. Please check your network connection or disable ad-blockers.');
       }
-      const { FFmpeg }  = FFmpegWASM;
-      const { toBlobURL } = FFmpegUtil;
+      const { createFFmpeg } = FFmpeg;
+      
+      const CORE_CDNS = [
+        'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js',
+        'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
+      ];
 
       let lastErr = null;
-
-      for (const cfg of FFMPEG_BUNDLES) {
+      for (const corePath of CORE_CDNS) {
         try {
-          console.log('[FFmpeg] Loading bundle:', cfg.label);
-
-          const [workerBlobURL, coreBlobURL, wasmBlobURL] = await Promise.all([
-            toBlobURL(cfg.worker,   'text/javascript'),
-            toBlobURL(cfg.coreJs,   'text/javascript'),
-            toBlobURL(cfg.coreWasm, 'application/wasm')
-          ]);
-
-          const ff = new FFmpeg();
-          await ff.load({
-            coreURL: coreBlobURL,
-            wasmURL: wasmBlobURL,
-            classWorkerURL: workerBlobURL  /* ← THE FIX for 0.12.x CDN loading */
+          if (onStatus) onStatus({ phase: 'init', message: 'Downloading FFmpeg core (may take a moment)...' });
+          
+          const ff = createFFmpeg({
+            corePath: corePath,
+            log: false
           });
-
+          
+          await ff.load();
           ffmpegInstance = ff;
-          console.log('[FFmpeg] ✓ Loaded via', cfg.label);
+          console.log('[FFmpeg] ✓ Loaded single-threaded core via', corePath);
           return ff;
         } catch (e) {
           lastErr = e;
-          console.warn('[FFmpeg] Bundle failed:', cfg.label, e.message);
+          console.warn('[FFmpeg] Failed to load core from', corePath, e);
         }
       }
-
-      throw new Error(
-        'Could not load FFmpeg worker.' +
-        (lastErr ? ' (' + lastErr.message + ')' : '') +
-        ' Try disabling ad blockers / privacy extensions, or switch network and reload.'
-      );
+      throw new Error('Could not load FFmpeg core. ' + (lastErr ? lastErr.message : ''));
     })();
 
     try { return await ffmpegLoading; }
     finally { ffmpegLoading = null; }
   }
 
-  /* ---------- byte fetcher ---------- */
   async function fetchVideoBytes(videoUrl) {
     let lastReason = '';
     for (let i = 0; i < BINARY_PROXIES.length; i++) {
@@ -2113,54 +2087,42 @@ a:hover{text-decoration:underline}
     );
   }
 
-  /* ---------- convert to MP3 ---------- */
-  async function convertToMp3(videoUrl, kbps, onProgress) {
-    const ff = await getFFmpeg();
-    const tag = Date.now() + '_' + Math.floor(Math.random() * 1e6);
-    const inputName  = 'hexin_'  + tag + '.mp4';
-    const outputName = 'hexout_' + tag + '.mp3';
+  async function convertToMp3(videoUrl, kbps, onProgress, onStatus) {
+    const ff = await getFFmpeg(onStatus);
+    
+    if (onProgress) onProgress(-1); 
+    const bytes = await fetchVideoBytes(videoUrl);
+    
+    const inputName = 'input.mp4';
+    const outputName = 'output.mp3';
+    
+    try { ff.FS('unlink', inputName); } catch(e){}
+    try { ff.FS('unlink', outputName); } catch(e){}
 
-    const progressHandler = (ev) => {
-      if (onProgress) onProgress(Math.max(0, Math.min(1, ev.progress || 0)));
-    };
-    ff.on('progress', progressHandler);
+    ff.FS('writeFile', inputName, bytes);
+    
+    if (onProgress) onProgress(0);
 
-    try {
-      if (onProgress) onProgress(-1);
-      const bytes = await fetchVideoBytes(videoUrl);
-      await ff.writeFile(inputName, bytes);
+    await ff.run(
+      '-i', inputName,
+      '-vn',
+      '-acodec', 'libmp3lame',
+      '-b:a', kbps + 'k',
+      '-ar', '44100',
+      outputName
+    );
 
-      const code = await ff.exec([
-        '-y',
-        '-i', inputName,
-        '-vn',
-        '-map', '0:a:0?',
-        '-acodec', 'libmp3lame',
-        '-b:a', kbps + 'k',
-        '-ar', '44100',
-        outputName
-      ]);
+    if (onProgress) onProgress(1);
 
-      if (code !== 0) throw new Error('FFmpeg exited with code ' + code);
+    const data = ff.FS('readFile', outputName);
+    const blob = new Blob([data.buffer], { type: 'audio/mpeg' });
 
-      const out = await ff.readFile(outputName);
-      let outBytes;
-      if (out instanceof Uint8Array) outBytes = out;
-      else if (typeof out === 'string') outBytes = new TextEncoder().encode(out);
-      else outBytes = new Uint8Array(out);
+    try { ff.FS('unlink', inputName); } catch (e) {}
+    try { ff.FS('unlink', outputName); } catch (e) {}
 
-      if (!outBytes || outBytes.length < 500) {
-        throw new Error('No audio track found in this video, or conversion produced an empty file.');
-      }
-      return new Blob([outBytes], { type: 'audio/mpeg' });
-    } finally {
-      try { ff.off('progress', progressHandler); } catch (e) {}
-      try { await ff.deleteFile(inputName);  } catch (e) {}
-      try { await ff.deleteFile(outputName); } catch (e) {}
-    }
+    return blob;
   }
 
-  /* ---------- MP3 UI flow with clear Loading → Fetching → Converting → Done states ---------- */
   async function handleMp3(videoUrl, shortcode, card, btn, qualitySelect) {
     const prog    = card.querySelector('.mp3-progress');
     const fill    = prog.querySelector('.mp3-bar-fill');
@@ -2177,30 +2139,43 @@ a:hover{text-decoration:underline}
 
     prog.classList.add('active');
     prog.classList.remove('success', 'error');
-    fill.style.width = '0%';
+    fill.style.width = '2%';
     fill.style.background = '';
     stateEl.innerHTML = '<i class="fas fa-cog fa-spin"></i> <strong>Loading FFmpeg engine…</strong>';
-    pctEl.textContent = '0%';
+    pctEl.textContent = '…';
 
     let phase = 'load';
 
     try {
-      const blob = await convertToMp3(videoUrl, kbps, (p) => {
-        if (p < 0) {
-          phase = 'fetch';
-          fill.style.width = '6%';
-          stateEl.innerHTML = '<i class="fas fa-cloud-arrow-down fa-fade"></i> <strong>Fetching video bytes…</strong>';
+      const blob = await convertToMp3(
+        videoUrl,
+        kbps,
+        (p) => {
+          if (p < 0) {
+            phase = 'fetch';
+            fill.style.width = '6%';
+            stateEl.innerHTML = '<i class="fas fa-cloud-arrow-down fa-fade"></i> <strong>Fetching video bytes…</strong>';
+            pctEl.textContent = '…';
+            return;
+          }
+          phase = 'encode';
+          if (p === 0) {
+            fill.style.width = '50%';
+            stateEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <strong>Converting to MP3 (' + kbps + ' kbps)…</strong>';
+            pctEl.textContent = '...';
+          } else if (p === 1) {
+            fill.style.width = '100%';
+            pctEl.textContent = '100%';
+          }
+        },
+        (status) => {
+          phase = status.phase || 'libs';
+          fill.style.width = '2%';
+          stateEl.innerHTML = '<i class="fas fa-cog fa-spin"></i> <strong>' + escapeHtml(status.message) + '</strong>';
           pctEl.textContent = '…';
-          return;
         }
-        phase = 'encode';
-        const pct = Math.round(p * 100);
-        fill.style.width = Math.max(6, pct) + '%';
-        stateEl.innerHTML = '<i class="fas fa-music"></i> <strong>Converting to MP3 (' + kbps + ' kbps)…</strong>';
-        pctEl.textContent = pct + '%';
-      });
+      );
 
-      /* Success */
       const filename = 'hexinsta-' + (shortcode || 'audio') + '-' + kbps + 'k.mp3';
       triggerDownload(blob, filename);
 
@@ -2211,15 +2186,17 @@ a:hover{text-decoration:underline}
       pctEl.textContent = '✓';
 
       showSuccess('MP3 saved: <strong>' + escapeHtml(filename) + '</strong> (' + kbps + ' kbps)');
+
     } catch (err) {
       console.error('[MP3]', err);
       prog.classList.add('error');
       fill.style.width = '100%';
       fill.style.background = '#ef4444';
-      stateEl.innerHTML = '<i class="fas fa-triangle-exclamation"></i> <strong>Failed — ' +
-        (phase === 'load' ? 'FFmpeg could not load.' :
-         phase === 'fetch' ? 'MP4 download blocked.' :
-         'Conversion error.') + '</strong>';
+      const reason =
+        (phase === 'libs'   || phase === 'bundle' || phase === 'init') ? 'FFmpeg could not load.' :
+        (phase === 'fetch') ? 'MP4 download blocked.' :
+        'Conversion error.';
+      stateEl.innerHTML = '<i class="fas fa-triangle-exclamation"></i> <strong>Failed — ' + reason + '</strong>';
       pctEl.textContent = '✗';
       showError('MP3 conversion failed: ' + escapeHtml(err.message || String(err)));
     } finally {
@@ -2420,13 +2397,14 @@ a:hover{text-decoration:underline}
   })();
 
   console.log(
-    '%cHEXInsta%c — theme gallery · live profile+media preview · classWorkerURL fix · 96→320 kbps MP3',
+    '%cHEXInsta%c — theme gallery · live profile+media preview · FFmpeg 0.11.6 (GitHub Pages ready) · 96→320 kbps MP3',
     'background:linear-gradient(135deg,#4b6bfb,#7b92b2,#67cba0);color:#fff;padding:4px 10px;border-radius:6px;font-weight:700;',
     'color:#8b93a8;'
   );
 })();
 </script>
-  <script>
+
+<script>
 // Disable right-click
 document.addEventListener('contextmenu', (e) => e.preventDefault());
 

@@ -6,13 +6,6 @@
 <meta name="theme-color" content="#f2f5ff" />
 <title>HEXInsta — Instagram Downloader (Reels · Photos · MP3)</title>
 
-<link rel="manifest" href="manifest.json" />
-<meta name="application-name" content="HEXInsta" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="HEXInsta" />
-<meta name="mobile-web-app-capable" content="yes" />
-
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://unpkg.com" crossorigin />
@@ -179,6 +172,7 @@
     applyPalette: applyPalette
   };
 
+  /* Apply saved theme immediately (prevents flash) */
   var saved = 'corporate';
   try { saved = localStorage.getItem('neon-theme') || 'corporate'; } catch (e) {}
   var custom = null;
@@ -423,7 +417,6 @@ a:hover{text-decoration:underline}
   transition:background .25s,border-color .25s;
 }
 .card::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad)}
-.card + .card{margin-top:18px}
 .title{
   margin:0 0 8px;font-size:clamp(1.35rem,4.4vw,1.85rem);
   font-weight:800;letter-spacing:-.3px;line-height:1.25;color:var(--text);
@@ -528,6 +521,8 @@ a:hover{text-decoration:underline}
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
   word-break:break-word;
 }
+
+/* Live media thumbnail */
 .live-media-thumb{
   position:relative;
   width:84px;height:84px;flex:0 0 84px;
@@ -624,6 +619,7 @@ a:hover{text-decoration:underline}
   background:rgba(0,0,0,.62);color:#fff;font-size:.7rem;font-weight:700;
   letter-spacing:.6px;text-transform:uppercase;backdrop-filter:blur(6px);
 }
+
 .card-check{
   position:absolute;top:10px;right:10px;z-index:5;
   width:28px;height:28px;border-radius:50%;
@@ -754,97 +750,6 @@ a:hover{text-decoration:underline}
 .hint-card strong{display:block;font-size:.92rem;margin-bottom:2px;color:var(--text)}
 .hint-card span{font-size:.82rem;color:var(--muted);line-height:1.5}
 
-/* ============================================================
-   UPLOAD SECTION
-   ============================================================ */
-.upload-zone{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:6px;padding:30px 20px;
-  border:2px dashed var(--border);
-  border-radius:var(--radius-sm);
-  background:var(--surface-2);
-  text-align:center;cursor:pointer;outline:none;
-  transition:border-color .2s,background .2s,transform .2s;
-  -webkit-tap-highlight-color:transparent;
-}
-.upload-zone:hover,
-.upload-zone:focus-visible{
-  border-color:var(--brand-1);
-  background:var(--surface);
-}
-.upload-zone.drag-over{
-  border-color:var(--brand-1);
-  background:rgba(75,107,251,.06);
-  transform:scale(1.01);
-}
-.upload-zone > i{
-  font-size:2.1rem;color:var(--brand-1);
-  filter:drop-shadow(0 8px 16px var(--ring));
-  margin-bottom:4px;
-}
-.upload-zone p{margin:0;color:var(--text);font-weight:700;font-size:.95rem}
-.upload-zone p.upload-hint{
-  color:var(--muted);font-weight:500;font-size:.78rem;margin-top:2px;
-}
-/* File input off-screen but clickable (bulletproof across mobile Safari/Chrome) */
-.file-input-offscreen{
-  position:absolute !important;
-  left:-9999px !important;
-  top:0 !important;
-  width:1px !important;
-  height:1px !important;
-  opacity:0 !important;
-  pointer-events:none;
-}
-
-.file-info{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 14px;margin-top:14px;
-  border-radius:var(--radius-sm);
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  animation:fadeUp .25s ease both;
-}
-.file-info > i{font-size:1.5rem;color:var(--brand-1);flex:0 0 auto}
-.file-info-text{
-  flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;
-}
-.file-info-text strong{
-  font-size:.92rem;font-weight:800;color:var(--text);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.file-info-text span{font-size:.78rem;color:var(--muted)}
-.file-remove{
-  position:static;transform:none;
-  flex:0 0 auto;width:32px;height:32px;
-}
-.file-remove:hover{transform:scale(1.05);background:rgba(239,68,68,.15);color:#ef4444}
-
-.convert-controls{
-  display:flex;flex-wrap:wrap;gap:10px;
-  margin-top:14px;padding:12px;
-  border-radius:12px;
-  background:var(--surface);
-  border:1px solid var(--border);
-}
-.convert-controls .quality-wrap{
-  flex:1 1 100%;padding:0;background:transparent;border:0;
-}
-.convert-controls .btn{flex:1 1 100%}
-
-.size-warn{
-  margin-top:10px;padding:10px 12px;
-  border-radius:10px;
-  background:rgba(234,179,8,.10);
-  border:1px solid rgba(234,179,8,.35);
-  color:var(--text);font-size:.8rem;
-  display:flex;align-items:flex-start;gap:8px;
-}
-.size-warn i{color:#ca8a04;margin-top:2px}
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
 .site-footer{
   padding:22px 18px 34px;text-align:center;font-size:.82rem;color:var(--muted);
   border-top:1px solid var(--border);
@@ -873,7 +778,6 @@ a:hover{text-decoration:underline}
   .live-media-thumb{width:68px;height:68px;flex-basis:68px}
   .theme-panel{top:calc(100% + 8px);right:0;padding:14px}
   .custom-grid{grid-template-columns:1fr}
-  .upload-zone{padding:24px 14px}
 }
 @media (max-width:380px){
   .brand-name{font-size:1.15rem}
@@ -894,7 +798,7 @@ a:hover{text-decoration:underline}
 <body>
 
 <!-- ============================================================
-     HEADER
+     HEADER  (GitHub link replaced with Theme picker)
      ============================================================ -->
 <header class="site-header">
   <div class="brand">
@@ -923,6 +827,7 @@ a:hover{text-decoration:underline}
           <i class="fas fa-xmark" aria-hidden="true"></i>
         </button>
       </div>
+
       <div id="themeGallery" class="theme-gallery"></div>
 
       <div class="theme-custom">
@@ -951,7 +856,6 @@ a:hover{text-decoration:underline}
 </header>
 
 <main class="wrap">
-  <!-- ===== URL Download Card ===== -->
   <section class="card">
     <h1 class="title">Download Instagram <span class="grad">Reels, Photos &amp; MP3</span></h1>
     <p class="subtitle">Paste a link — see the live profile &amp; preview, then pick quality and download.</p>
@@ -994,62 +898,6 @@ a:hover{text-decoration:underline}
     </div>
   </section>
 
-  <!-- ===== Upload → MP3 Card ===== -->
-  <section class="card" id="uploadCard">
-    <h2 class="title">Upload <span class="grad">Video → MP3</span></h2>
-    <p class="subtitle">Any video format (MP4 · MOV · MKV · WEBM · AVI · FLV · TS · M4V · 3GP · WMV · OGV…). Runs entirely on your device — nothing is uploaded.</p>
-
-    <div class="upload-zone" id="uploadZone" role="button" tabindex="0"
-         aria-label="Upload a video file to convert to MP3">
-      <input type="file" id="fileInput" class="file-input-offscreen"
-             accept="video/*,audio/*,.mkv,.avi,.flv,.mov,.m4v,.3gp,.ts,.mts,.m2ts,.mpg,.mpeg,.wmv,.ogv,.vob,.asf,.rm,.rmvb,.divx,.f4v" />
-      <i class="fas fa-cloud-arrow-up" aria-hidden="true"></i>
-      <p>Click, tap or drop a video file</p>
-      <p class="upload-hint">MP4 · MOV · MKV · WEBM · AVI · FLV · TS · M4V · 3GP · WMV · OGV…</p>
-    </div>
-
-    <div class="file-info hidden" id="fileInfo">
-      <i class="fas fa-file-video" aria-hidden="true"></i>
-      <div class="file-info-text">
-        <strong id="fileName">—</strong>
-        <span id="fileMeta">—</span>
-      </div>
-      <button class="icon-btn file-remove" id="fileRemove" type="button" title="Remove file" aria-label="Remove file">
-        <i class="fas fa-xmark" aria-hidden="true"></i>
-      </button>
-    </div>
-
-    <div id="sizeWarn" class="size-warn hidden">
-      <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
-      <span>Large file detected — conversion runs in browser memory. If it fails, try a smaller file or split the video.</span>
-    </div>
-
-    <div class="convert-controls hidden" id="convertControls">
-      <div class="quality-wrap">
-        <label for="uploadQuality"><i class="fas fa-sliders"></i> MP3 quality</label>
-        <select class="quality-select" id="uploadQuality" aria-label="MP3 bitrate">
-          <option value="96">96 kbps — speech / low bandwidth</option>
-          <option value="128">128 kbps — casual listening</option>
-          <option value="160">160 kbps — balanced</option>
-          <option value="192" selected>192 kbps — recommended</option>
-          <option value="256">256 kbps — high quality</option>
-          <option value="320">320 kbps — maximum (lossy ceiling)</option>
-        </select>
-      </div>
-      <button class="btn" id="convertUploadBtn" type="button">
-        <i class="fas fa-music" aria-hidden="true"></i> Convert to MP3
-      </button>
-    </div>
-
-    <div class="mp3-progress" id="uploadProgress">
-      <div class="mp3-status">
-        <span class="mp3-state"><i class="fas fa-hourglass-half"></i> <strong>Ready</strong></span>
-        <span class="mp3-pct">0%</span>
-      </div>
-      <div class="mp3-bar"><div class="mp3-bar-fill"></div></div>
-    </div>
-  </section>
-
   <section class="hints" aria-label="Features">
     <div class="hint-card">
       <i class="fas fa-user-circle" aria-hidden="true"></i>
@@ -1064,8 +912,8 @@ a:hover{text-decoration:underline}
       <div><strong>MP4 → MP3</strong><span>FFmpeg in-browser. 96 → 320 kbps quality picker.</span></div>
     </div>
     <div class="hint-card">
-      <i class="fas fa-file-video" aria-hidden="true"></i>
-      <div><strong>Upload Any Video</strong><span>MP4, MOV, MKV, WEBM, AVI, FLV, TS… → MP3 offline.</span></div>
+      <i class="fas fa-volume-high" aria-hidden="true"></i>
+      <div><strong>Audio</strong><span>Video plays with sound — no more silent reels.</span></div>
     </div>
   </section>
 </main>
@@ -1075,7 +923,7 @@ a:hover{text-decoration:underline}
   <p>Not affiliated with Instagram. Respect creators’ rights.</p>
 </footer>
 
-<!-- FFmpeg.wasm 0.12.10 — proven-stable versions -->
+<!-- FFmpeg.wasm main API (0.12.10) -->
 <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
 
@@ -1100,6 +948,7 @@ a:hover{text-decoration:underline}
 
   const SWATCHES = T.SWATCHES;
 
+  /* DOM refs */
   const themeToggle       = document.getElementById('themeToggle');
   const themePanel        = document.getElementById('themePanel');
   const themeClose        = document.getElementById('themeClose');
@@ -1121,7 +970,9 @@ a:hover{text-decoration:underline}
   };
 
   let currentTheme = 'corporate';
+  let currentPalette = null;
 
+  /* ---------- helpers ---------- */
   function setMeta(color) {
     if (metaThemeColor) metaThemeColor.setAttribute('content', color);
   }
@@ -1144,6 +995,7 @@ a:hover{text-decoration:underline}
     });
   }
 
+  /* ---------- apply a named theme ---------- */
   function setTheme(name, opts) {
     opts = opts || {};
     if (!SWATCHES[name]) name = 'corporate';
@@ -1152,6 +1004,7 @@ a:hover{text-decoration:underline}
     T.applyPalette(pal);
     document.documentElement.setAttribute('data-theme', name);
     currentTheme = name;
+    currentPalette = pal;
     themeCurrentLabel.textContent = name;
     setMeta(pal['--bg']);
     markActiveCard(name);
@@ -1163,6 +1016,7 @@ a:hover{text-decoration:underline}
     }
   }
 
+  /* ---------- apply custom colors ---------- */
   function applyCustomColors() {
     const c = {
       primary:     customInputs.primary.value,
@@ -1179,17 +1033,20 @@ a:hover{text-decoration:underline}
     T.applyPalette(pal);
     document.documentElement.setAttribute('data-theme', 'custom');
     currentTheme = 'custom';
+    currentPalette = pal;
     themeCurrentLabel.textContent = 'custom';
     setMeta(pal['--base-100']);
     markActiveCard('');
     try { localStorage.setItem('neon-custom-colors', JSON.stringify(c)); } catch (e) {}
   }
 
+  /* ---------- reset to corporate ---------- */
   function resetSystemTheme() {
     try { localStorage.removeItem('neon-custom-colors'); } catch (e) {}
     setTheme('corporate');
   }
 
+  /* ---------- build the gallery ---------- */
   function buildThemeGallery() {
     themeGallery.innerHTML = '';
     THEMES.forEach(function (name) {
@@ -1229,6 +1086,7 @@ a:hover{text-decoration:underline}
     });
   }
 
+  /* ---------- panel open / close ---------- */
   function openPanel() {
     themePanel.hidden = false;
     themeToggle.setAttribute('aria-expanded', 'true');
@@ -1248,6 +1106,7 @@ a:hover{text-decoration:underline}
     if (e.key === 'Escape') closePanel();
   }
 
+  /* ---------- theme init ---------- */
   (function initTheme() {
     let savedTheme = 'corporate';
     let savedCustom = null;
@@ -1274,6 +1133,7 @@ a:hover{text-decoration:underline}
       const pal = T.deriveCustom(initialCustom);
       T.applyPalette(pal);
       document.documentElement.setAttribute('data-theme', 'custom');
+      currentPalette = pal;
       themeCurrentLabel.textContent = 'custom';
       setMeta(pal['--base-100']);
       markActiveCard('');
@@ -1281,6 +1141,7 @@ a:hover{text-decoration:underline}
       setTheme(currentTheme, { skipSave: true });
     }
 
+    /* Wire events */
     themeToggle.addEventListener('click', function (e) {
       e.stopPropagation();
       if (themePanel.hidden) openPanel(); else closePanel();
@@ -1289,6 +1150,7 @@ a:hover{text-decoration:underline}
     applyCustomBtn.addEventListener('click', applyCustomColors);
     resetThemeBtn.addEventListener('click', resetSystemTheme);
 
+    /* Live preview when tweaking custom colors */
     Object.keys(customInputs).forEach(function (k) {
       customInputs[k].addEventListener('input', applyCustomColors);
     });
@@ -1347,10 +1209,7 @@ a:hover{text-decoration:underline}
   const JINA_BASE = 'https://r.jina.ai/';
   const REQ_TIMEOUT = 14000;
 
-  /* ============================================================
-     FFmpeg bundles — 0.12.10 is the well-tested combination
-     across browsers. Chunk file `814.ffmpeg.js` is stable.
-     ============================================================ */
+  /* FFmpeg bundles — classWorkerURL fix for v0.12.x */
   const FFMPEG_BUNDLES = [
     {
       label: 'jsdelivr · ffmpeg@0.12.10 + core@0.12.6',
@@ -1364,13 +1223,6 @@ a:hover{text-decoration:underline}
       coreJs:   'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
       coreWasm: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm'
     }
-  ];
-
-  const FFMPEG_SCRIPTS = [
-    ['https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js',
-     'https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js'],
-    ['https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js',
-     'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js']
   ];
 
   const MP3_QUALITIES = [
@@ -1391,8 +1243,8 @@ a:hover{text-decoration:underline}
   let previewTimer = null;
   let ffmpegInstance = null;
   let ffmpegLoading = null;
-  let ffmpegLoadError = null;
 
+  /* ---------- utilities ---------- */
   function decodeIG(s) {
     return String(s)
       .replace(/\\u0026/gi, '&')
@@ -1454,14 +1306,6 @@ a:hover{text-decoration:underline}
     return String(n);
   }
 
-  function formatBytes(bytes) {
-    if (!bytes || bytes < 0) return '0 B';
-    const units = ['B', 'KB', 'MB', 'GB'];
-    let i = 0, v = bytes;
-    while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
-    return v.toFixed(v >= 100 || i === 0 ? 0 : 1) + ' ' + units[i];
-  }
-
   function isValidMediaBytes(u8) {
     if (!u8 || u8.length < 16) return false;
     if (u8[4] === 0x66 && u8[5] === 0x74 && u8[6] === 0x79 && u8[7] === 0x70) return true;
@@ -1470,26 +1314,6 @@ a:hover{text-decoration:underline}
     if (u8[0] === 0x3C) return false;
     if (u8[0] === 0x7B || u8[0] === 0x5B) return false;
     return u8.length > 50000;
-  }
-
-  /* ============================================================
-     Extension detection — MIME fallback for files without ext
-     ============================================================ */
-  function extFromFile(file) {
-    const nameMatch = String(file.name || '').match(/\.([a-z0-9]{2,5})$/i);
-    if (nameMatch) return nameMatch[1].toLowerCase();
-    const mime = (file.type || '').toLowerCase();
-    if (mime.includes('mp4')) return 'mp4';
-    if (mime.includes('webm')) return 'webm';
-    if (mime.includes('matroska')) return 'mkv';
-    if (mime.includes('quicktime')) return 'mov';
-    if (mime.includes('x-msvideo') || mime.includes('avi')) return 'avi';
-    if (mime.includes('x-flv')) return 'flv';
-    if (mime.includes('mp2t')) return 'ts';
-    if (mime.includes('3gpp')) return '3gp';
-    if (mime.includes('x-ms-wmv') || mime.includes('x-ms-asf')) return 'wmv';
-    if (mime.includes('ogg')) return 'ogv';
-    return 'bin';
   }
 
   /* ---------- parsers ---------- */
@@ -1676,16 +1500,19 @@ a:hover{text-decoration:underline}
     return extractFromHtml(text);
   }
 
+  /* ---------- strategies ---------- */
   async function tryJina(shortcode) {
     const targets = [
       'https://www.instagram.com/p/'    + shortcode + '/embed/captioned/',
-      'https://www.instagram.com/reel/' + shortcode + '/embed/captioned/'
+      'https://www.instagram.com/reel/' + shortcode + '/embed/captioned/',
+      'https://www.instagram.com/p/'    + shortcode + '/'
     ];
     for (const target of targets) {
       try {
-        const res = await fetchWithTimeout(JINA_BASE + target, {
+        const url = JINA_BASE + target;
+        const res = await fetchWithTimeout(url, {
           headers: { 'X-Return-Format': 'html', 'Accept': 'text/html' }
-        }, 16000);
+        }, 18000);
         if (!res.ok) continue;
         const text = await res.text();
         const media = parseAnyFormat(text);
@@ -1703,15 +1530,18 @@ a:hover{text-decoration:underline}
             method: 'POST',
             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: instagramUrl })
-          }, 12000);
+          }, 14000);
           if (!res.ok) continue;
           const data = await res.json();
-          const pickUrl = (data && (data.url || (Array.isArray(data) && data[0] && data[0].url)));
-          if (pickUrl) {
-            const u = data.url || data[0].url;
-            return { video: u, images: [], thumb: null, username: null, caption: null,
+          if (data && (data.status === 'tunnel' || data.status === 'redirect') && data.url)
+            return { video: data.url, images: [], thumb: null, username: null, caption: null,
                      profilePic: null, fullName: null, followerCount: null };
-          }
+          if (data && data.status === 'success' && data.url)
+            return { video: data.url, images: [], thumb: null, username: null, caption: null,
+                     profilePic: null, fullName: null, followerCount: null };
+          if (Array.isArray(data) && data[0] && data[0].url)
+            return { video: data[0].url, images: [], thumb: null, username: null, caption: null,
+                     profilePic: null, fullName: null, followerCount: null };
         } catch (e) { /* next */ }
       }
     }
@@ -1729,7 +1559,7 @@ a:hover{text-decoration:underline}
         try {
           const res = await fetchWithTimeout(proxyFn(target), {
             headers: { 'Accept': 'text/html,application/xhtml+xml,*/*' }
-          }, 10000);
+          }, 12000);
           if (!res.ok) continue;
           const text = await res.text();
           if (!text || text.length < 400) continue;
@@ -1780,6 +1610,7 @@ a:hover{text-decoration:underline}
     return { media, method };
   }
 
+  /* ---------- messages ---------- */
   function clearResponse() { responseEl.innerHTML = ''; }
   function showMessage(type, html) {
     const icon = type === 'error' ? 'fa-circle-exclamation'
@@ -1812,6 +1643,7 @@ a:hover{text-decoration:underline}
     updateSelectionCount();
   }
 
+  /* ---------- live preview ---------- */
   function hideLivePreview() {
     livePreview.classList.add('hidden');
     livePreview.innerHTML = '';
@@ -1844,6 +1676,7 @@ a:hover{text-decoration:underline}
            '</div>';
   }
 
+  /* === NEW: build a media thumbnail for the live preview === */
   function buildMediaThumb(media) {
     if (!media) return '';
     const poster = media.thumb || (media.images.length ? media.images[0] : '');
@@ -1903,6 +1736,7 @@ a:hover{text-decoration:underline}
       '</div>' +
       buildMediaThumb(media);
 
+    /* Click on thumb → scroll to result or trigger fetch */
     const thumb = livePreview.querySelector('.live-media-thumb');
     if (thumb) {
       thumb.addEventListener('click', () => {
@@ -1947,6 +1781,7 @@ a:hover{text-decoration:underline}
     }
   }
 
+  /* ---------- selection ---------- */
   function updateSelectionCount() {
     const checks = $$('.card-check input', renderEl);
     const total = checks.length;
@@ -1960,6 +1795,7 @@ a:hover{text-decoration:underline}
     });
   }
 
+  /* ---------- card builders ---------- */
   function buildActions(media, filename, label) {
     const row = document.createElement('div');
     row.className = 'download-options';
@@ -2098,6 +1934,7 @@ a:hover{text-decoration:underline}
     return card;
   }
 
+  /* ---------- save + download ---------- */
   async function saveMedia(url, filename, btn) {
     const orig = btn ? btn.innerHTML : '';
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…'; }
@@ -2194,98 +2031,50 @@ a:hover{text-decoration:underline}
     updateSelectionCount();
   }
 
-  /* ============================================================
-     FFmpeg LOADER
-     ============================================================ */
-  function loadScript(src) {
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = src;
-      s.async = true;
-      s.onload = () => resolve();
-      s.onerror = () => reject(new Error('Script failed: ' + src));
-      document.head.appendChild(s);
-    });
-  }
-
-  async function ensureFFmpegLibs() {
-    if (typeof window.FFmpegWASM !== 'undefined' && typeof window.FFmpegUtil !== 'undefined') {
-      return;
-    }
-    let lastErr = null;
-    for (const [ffSrc, utilSrc] of FFMPEG_SCRIPTS) {
-      try {
-        if (typeof window.FFmpegWASM === 'undefined') await loadScript(ffSrc);
-        if (typeof window.FFmpegUtil === 'undefined') await loadScript(utilSrc);
-        if (typeof window.FFmpegWASM !== 'undefined' && typeof window.FFmpegUtil !== 'undefined') return;
-      } catch (e) {
-        lastErr = e;
-        console.warn('[FFmpeg] lib script fallback failed:', e.message);
-      }
-    }
-    throw new Error(
-      'Could not load FFmpeg library' +
-      (lastErr ? ' (' + lastErr.message + ')' : '') +
-      '. Check your network / disable ad blockers, then reload.'
-    );
-  }
-
+  /* ---------- FFmpeg loader (classWorkerURL fix for v0.12.x) ---------- */
   async function getFFmpeg() {
     if (ffmpegInstance) return ffmpegInstance;
     if (ffmpegLoading) return ffmpegLoading;
 
     ffmpegLoading = (async () => {
-      await ensureFFmpegLibs();
-      const { FFmpeg }  = window.FFmpegWASM;
-      const { toBlobURL } = window.FFmpegUtil;
+      if (typeof FFmpegWASM === 'undefined' || typeof FFmpegUtil === 'undefined') {
+        throw new Error('FFmpeg library did not load (jsdelivr blocked by network or extension).');
+      }
+      const { FFmpeg }  = FFmpegWASM;
+      const { toBlobURL } = FFmpegUtil;
 
       let lastErr = null;
 
       for (const cfg of FFMPEG_BUNDLES) {
-        const workerModes = ['blob', 'direct'];
-        for (const mode of workerModes) {
-          try {
-            console.log('[FFmpeg] Loading', cfg.label, '| worker:', mode);
+        try {
+          console.log('[FFmpeg] Loading bundle:', cfg.label);
 
-            let workerURL, coreURL, wasmURL;
+          const [workerBlobURL, coreBlobURL, wasmBlobURL] = await Promise.all([
+            toBlobURL(cfg.worker,   'text/javascript'),
+            toBlobURL(cfg.coreJs,   'text/javascript'),
+            toBlobURL(cfg.coreWasm, 'application/wasm')
+          ]);
 
-            if (mode === 'blob') {
-              [workerURL, coreURL, wasmURL] = await Promise.all([
-                toBlobURL(cfg.worker,   'text/javascript'),
-                toBlobURL(cfg.coreJs,   'text/javascript'),
-                toBlobURL(cfg.coreWasm, 'application/wasm')
-              ]);
-            } else {
-              workerURL = cfg.worker;
-              [coreURL, wasmURL] = await Promise.all([
-                toBlobURL(cfg.coreJs,   'text/javascript'),
-                toBlobURL(cfg.coreWasm, 'application/wasm')
-              ]);
-            }
+          const ff = new FFmpeg();
+          await ff.load({
+            coreURL: coreBlobURL,
+            wasmURL: wasmBlobURL,
+            classWorkerURL: workerBlobURL  /* ← THE FIX for 0.12.x CDN loading */
+          });
 
-            const ff = new FFmpeg();
-            await ff.load({
-              coreURL: coreURL,
-              wasmURL: wasmURL,
-              classWorkerURL: workerURL
-            });
-
-            ffmpegInstance = ff;
-            ffmpegLoadError = null;
-            console.log('[FFmpeg] ✓ Loaded via', cfg.label, '| worker:', mode);
-            return ff;
-          } catch (e) {
-            lastErr = e;
-            console.warn('[FFmpeg] Failed:', cfg.label, '| worker:', mode, '→', e.message);
-          }
+          ffmpegInstance = ff;
+          console.log('[FFmpeg] ✓ Loaded via', cfg.label);
+          return ff;
+        } catch (e) {
+          lastErr = e;
+          console.warn('[FFmpeg] Bundle failed:', cfg.label, e.message);
         }
       }
 
-      ffmpegLoadError = lastErr;
       throw new Error(
         'Could not load FFmpeg worker.' +
         (lastErr ? ' (' + lastErr.message + ')' : '') +
-        ' Try: disable ad blockers, use a different network (mobile hotspot), or reload the page.'
+        ' Try disabling ad blockers / privacy extensions, or switch network and reload.'
       );
     })();
 
@@ -2293,6 +2082,7 @@ a:hover{text-decoration:underline}
     finally { ffmpegLoading = null; }
   }
 
+  /* ---------- byte fetcher ---------- */
   async function fetchVideoBytes(videoUrl) {
     let lastReason = '';
     for (let i = 0; i < BINARY_PROXIES.length; i++) {
@@ -2323,7 +2113,7 @@ a:hover{text-decoration:underline}
     );
   }
 
-  /* ---------- Instagram URL → MP3 ---------- */
+  /* ---------- convert to MP3 ---------- */
   async function convertToMp3(videoUrl, kbps, onProgress) {
     const ff = await getFFmpeg();
     const tag = Date.now() + '_' + Math.floor(Math.random() * 1e6);
@@ -2344,21 +2134,14 @@ a:hover{text-decoration:underline}
         '-y',
         '-i', inputName,
         '-vn',
-        '-map', '0:a:0',
+        '-map', '0:a:0?',
         '-acodec', 'libmp3lame',
         '-b:a', kbps + 'k',
         '-ar', '44100',
-        '-ac', '2',
-        '-f', 'mp3',
         outputName
       ]);
 
-      if (code !== 0) {
-        throw new Error(
-          'FFmpeg exited with code ' + code +
-          '. This reel may not have an audio track, or the audio codec is unsupported.'
-        );
-      }
+      if (code !== 0) throw new Error('FFmpeg exited with code ' + code);
 
       const out = await ff.readFile(outputName);
       let outBytes;
@@ -2377,6 +2160,7 @@ a:hover{text-decoration:underline}
     }
   }
 
+  /* ---------- MP3 UI flow with clear Loading → Fetching → Converting → Done states ---------- */
   async function handleMp3(videoUrl, shortcode, card, btn, qualitySelect) {
     const prog    = card.querySelector('.mp3-progress');
     const fill    = prog.querySelector('.mp3-bar-fill');
@@ -2416,6 +2200,7 @@ a:hover{text-decoration:underline}
         pctEl.textContent = pct + '%';
       });
 
+      /* Success */
       const filename = 'hexinsta-' + (shortcode || 'audio') + '-' + kbps + 'k.mp3';
       triggerDownload(blob, filename);
 
@@ -2442,254 +2227,6 @@ a:hover{text-decoration:underline}
       btn.innerHTML = orig;
     }
   }
-
-  /* ============================================================
-     UPLOAD FLOW — Any video format → MP3
-     ============================================================ */
-  const uploadZone       = document.getElementById('uploadZone');
-  const fileInput        = document.getElementById('fileInput');
-  const fileInfo         = document.getElementById('fileInfo');
-  const fileNameEl       = document.getElementById('fileName');
-  const fileMetaEl       = document.getElementById('fileMeta');
-  const fileRemoveBtn    = document.getElementById('fileRemove');
-  const convertControls  = document.getElementById('convertControls');
-  const convertUploadBtn = document.getElementById('convertUploadBtn');
-  const uploadQuality    = document.getElementById('uploadQuality');
-  const uploadProgress   = document.getElementById('uploadProgress');
-  const sizeWarn         = document.getElementById('sizeWarn');
-
-  let uploadedFile = null;
-  const LARGE_FILE_BYTES = 300 * 1024 * 1024;
-
-  function fileIsVideoOrAudio(file) {
-    if (!file) return false;
-    if (file.type && (file.type.startsWith('video/') || file.type.startsWith('audio/'))) return true;
-    return /\.(mp4|m4v|mov|mkv|webm|avi|flv|ts|mts|m2ts|3gp|3g2|mpg|mpeg|wmv|ogv|asf|vob|rm|rmvb|divx|f4v)$/i.test(file.name);
-  }
-
-  function setUploadedFile(file) {
-    if (!file) return;
-    if (!fileIsVideoOrAudio(file)) {
-      showError('That doesn’t look like a video/audio file. Try MP4, MOV, MKV, WEBM, AVI, FLV, TS, M4V or 3GP.');
-      return;
-    }
-    uploadedFile = file;
-    fileNameEl.textContent = file.name;
-    const ext = (file.name.split('.').pop() || 'video').toUpperCase();
-    fileMetaEl.textContent = formatBytes(file.size) + ' · ' + ext + (file.type ? ' · ' + file.type : '');
-    fileInfo.classList.remove('hidden');
-    convertControls.classList.remove('hidden');
-
-    if (file.size > LARGE_FILE_BYTES) sizeWarn.classList.remove('hidden');
-    else sizeWarn.classList.add('hidden');
-
-    uploadProgress.classList.remove('active', 'success', 'error');
-    uploadProgress.querySelector('.mp3-bar-fill').style.width = '0%';
-    uploadProgress.querySelector('.mp3-bar-fill').style.background = '';
-    uploadProgress.querySelector('.mp3-state').innerHTML =
-      '<i class="fas fa-hourglass-half"></i> <strong>Ready</strong>';
-    uploadProgress.querySelector('.mp3-pct').textContent = '0%';
-    clearResponse();
-  }
-
-  function resetUpload() {
-    uploadedFile = null;
-    fileInput.value = '';
-    fileInfo.classList.add('hidden');
-    convertControls.classList.add('hidden');
-    sizeWarn.classList.add('hidden');
-    uploadProgress.classList.remove('active', 'success', 'error');
-    uploadProgress.querySelector('.mp3-bar-fill').style.width = '0%';
-    uploadProgress.querySelector('.mp3-bar-fill').style.background = '';
-    uploadProgress.querySelector('.mp3-state').innerHTML =
-      '<i class="fas fa-hourglass-half"></i> <strong>Ready</strong>';
-    uploadProgress.querySelector('.mp3-pct').textContent = '0%';
-  }
-
-  /* Trigger file picker — works with offscreen input across all browsers */
-  function openFilePicker() {
-    try {
-      if (typeof fileInput.showPicker === 'function') {
-        fileInput.showPicker();
-        return;
-      }
-    } catch (e) { /* fall through */ }
-    fileInput.click();
-  }
-
-  uploadZone.addEventListener('click', openFilePicker);
-  uploadZone.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFilePicker(); }
-  });
-  ['dragenter','dragover'].forEach(evName => {
-    uploadZone.addEventListener(evName, (e) => {
-      e.preventDefault(); e.stopPropagation();
-      uploadZone.classList.add('drag-over');
-    });
-  });
-  ['dragleave','dragend'].forEach(evName => {
-    uploadZone.addEventListener(evName, (e) => {
-      e.preventDefault(); e.stopPropagation();
-      if (evName === 'dragleave' && uploadZone.contains(e.relatedTarget)) return;
-      uploadZone.classList.remove('drag-over');
-    });
-  });
-  uploadZone.addEventListener('drop', (e) => {
-    e.preventDefault(); e.stopPropagation();
-    uploadZone.classList.remove('drag-over');
-    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    if (file) setUploadedFile(file);
-  });
-
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) setUploadedFile(file);
-  });
-
-  fileRemoveBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    resetUpload();
-  });
-
-  /* ---------- convert any uploaded video/audio → MP3 ---------- */
-  async function convertFileToMp3(file, kbps, onPhase, onProgress) {
-    const ff = await getFFmpeg();
-    const { fetchFile } = window.FFmpegUtil;
-
-    const tag = Date.now() + '_' + Math.floor(Math.random() * 1e6);
-    const ext = extFromFile(file);
-    const inputName  = 'uplin_'  + tag + '.' + ext;
-    const outputName = 'uplout_' + tag + '.mp3';
-
-    const progressHandler = (ev) => {
-      if (onProgress) onProgress(Math.max(0, Math.min(1, ev.progress || 0)));
-    };
-    ff.on('progress', progressHandler);
-
-    try {
-      if (onPhase) onPhase('read');
-      const data = await fetchFile(file);
-
-      if (onPhase) onPhase('write');
-      await ff.writeFile(inputName, data);
-
-      if (onPhase) onPhase('encode');
-
-      const code = await ff.exec([
-        '-y',
-        '-i', inputName,
-        '-vn',
-        '-map', '0:a:0',
-        '-acodec', 'libmp3lame',
-        '-b:a', kbps + 'k',
-        '-ar', '44100',
-        '-ac', '2',
-        '-f', 'mp3',
-        outputName
-      ]);
-
-      if (code !== 0) {
-        throw new Error(
-          'FFmpeg exited with code ' + code +
-          '. This file may have no audio track, or uses an unsupported codec.'
-        );
-      }
-
-      const out = await ff.readFile(outputName);
-      let outBytes;
-      if (out instanceof Uint8Array) outBytes = out;
-      else if (typeof out === 'string') outBytes = new TextEncoder().encode(out);
-      else outBytes = new Uint8Array(out);
-
-      if (!outBytes || outBytes.length < 500) {
-        throw new Error('Conversion produced an empty file. Is there an audio track in this video?');
-      }
-      return new Blob([outBytes], { type: 'audio/mpeg' });
-    } finally {
-      try { ff.off('progress', progressHandler); } catch (e) {}
-      try { await ff.deleteFile(inputName);  } catch (e) {}
-      try { await ff.deleteFile(outputName); } catch (e) {}
-    }
-  }
-
-  convertUploadBtn.addEventListener('click', async () => {
-    if (!uploadedFile || convertUploadBtn.disabled) return;
-
-    const kbps = parseInt(uploadQuality.value, 10) || 192;
-    const fill    = uploadProgress.querySelector('.mp3-bar-fill');
-    const stateEl = uploadProgress.querySelector('.mp3-state');
-    const pctEl   = uploadProgress.querySelector('.mp3-pct');
-
-    const orig = convertUploadBtn.innerHTML;
-    convertUploadBtn.disabled = true;
-    convertUploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Working…';
-
-    uploadProgress.classList.add('active');
-    uploadProgress.classList.remove('success', 'error');
-    fill.style.width = '0%';
-    fill.style.background = '';
-    stateEl.innerHTML = '<i class="fas fa-cog fa-spin"></i> <strong>Loading FFmpeg engine…</strong>';
-    pctEl.textContent = '0%';
-    clearResponse();
-
-    let phase = 'load';
-
-    try {
-      const blob = await convertFileToMp3(
-        uploadedFile,
-        kbps,
-        (ph) => {
-          phase = ph;
-          if (ph === 'read') {
-            fill.style.width = '4%';
-            stateEl.innerHTML = '<i class="fas fa-file-arrow-up fa-fade"></i> <strong>Reading file…</strong>';
-            pctEl.textContent = '…';
-          } else if (ph === 'write') {
-            fill.style.width = '8%';
-            stateEl.innerHTML = '<i class="fas fa-hard-drive fa-fade"></i> <strong>Writing to FFmpeg FS…</strong>';
-            pctEl.textContent = '…';
-          } else if (ph === 'encode') {
-            stateEl.innerHTML = '<i class="fas fa-music"></i> <strong>Converting to MP3 (' + kbps + ' kbps)…</strong>';
-          }
-        },
-        (p) => {
-          phase = 'encode';
-          const pct = Math.round(p * 100);
-          fill.style.width = Math.max(8, pct) + '%';
-          stateEl.innerHTML = '<i class="fas fa-music"></i> <strong>Converting to MP3 (' + kbps + ' kbps)…</strong>';
-          pctEl.textContent = pct + '%';
-        }
-      );
-
-      const baseName = (uploadedFile.name || 'video').replace(/\.[^.]+$/, '') || 'audio';
-      const safeBase = baseName.replace(/[\\/:*?"<>|]+/g, '_').slice(0, 80);
-      const filename = 'hexinsta-' + safeBase + '-' + kbps + 'k.mp3';
-
-      triggerDownload(blob, filename);
-
-      uploadProgress.classList.add('success');
-      fill.style.width = '100%';
-      fill.style.background = 'linear-gradient(90deg,#22c55e,#16a34a)';
-      stateEl.innerHTML = '<i class="fas fa-circle-check"></i> <strong>Saved: ' + escapeHtml(filename) + '</strong>';
-      pctEl.textContent = '✓';
-
-      showSuccess('MP3 saved: <strong>' + escapeHtml(filename) + '</strong> (' + kbps + ' kbps, ' + formatBytes(blob.size) + ')');
-    } catch (err) {
-      console.error('[Upload→MP3]', err);
-      uploadProgress.classList.add('error');
-      fill.style.width = '100%';
-      fill.style.background = '#ef4444';
-      stateEl.innerHTML = '<i class="fas fa-triangle-exclamation"></i> <strong>Failed — ' +
-        (phase === 'load' ? 'FFmpeg could not load.' :
-         phase === 'read' || phase === 'write' ? 'Could not read the file.' :
-         'Conversion error.') + '</strong>';
-      pctEl.textContent = '✗';
-      showError('MP3 conversion failed: ' + escapeHtml(err.message || String(err)));
-    } finally {
-      convertUploadBtn.disabled = false;
-      convertUploadBtn.innerHTML = orig;
-    }
-  });
 
   /* ---------- iframe fallback ---------- */
   function showIframeFallback(shortcode, originalUrl) {
@@ -2739,6 +2276,7 @@ a:hover{text-decoration:underline}
     resultSection.classList.add('visible');
   }
 
+  /* ---------- main flow ---------- */
   async function getMedia() {
     if (state.busy) return;
 
@@ -2784,6 +2322,7 @@ a:hover{text-decoration:underline}
     );
   }
 
+  /* ---------- multi-download ---------- */
   async function downloadSelected() {
     const checked = $$('.card-check input:checked', renderEl);
     if (!checked.length) return;
@@ -2815,6 +2354,7 @@ a:hover{text-decoration:underline}
     downloadSelectedBtn.disabled = false;
   }
 
+  /* ---------- input UX ---------- */
   function syncClear() {
     clearBtn.classList.toggle('hidden', inputEl.value.trim().length === 0);
   }
@@ -2844,6 +2384,7 @@ a:hover{text-decoration:underline}
     inputEl.focus();
   }
 
+  /* ---------- events ---------- */
   fetchBtn.addEventListener('click', getMedia);
   pasteBtn.addEventListener('click', pasteFromClipboard);
   clearBtn.addEventListener('click', clearInput);
@@ -2878,86 +2419,111 @@ a:hover{text-decoration:underline}
     } catch (e) {}
   })();
 
-  /* ============================================================
-     OPTIONAL: PWA SW registration — safe, opt-in
-     Only registers service-worker.js if it exists (HEAD check).
-     Never registers coi-serviceworker.js automatically (prevents
-     reload loops). Add ?pwa=1 in URL to force-attempt both.
-     ============================================================ */
-  (async function registerPWA() {
-    if (!('serviceWorker' in navigator)) return;
-    const force = new URLSearchParams(location.search).get('pwa') === '1';
-
-    // Only try coi-serviceworker if explicitly forced — its auto-reload
-    // behaviour is dangerous without a real file present.
-    if (force && !window.crossOriginIsolated && !sessionStorage.getItem('coi-attempted')) {
-      sessionStorage.setItem('coi-attempted', '1');
-      try {
-        await navigator.serviceWorker.register('coi-serviceworker.js');
-        console.log('[coi-sw] registered');
-      } catch (e) {
-        console.info('[coi-sw] not present — continuing single-file mode');
-      }
-    }
-
-    // App service worker — check file exists first via HEAD
-    try {
-      const res = await fetch('service-worker.js', { method: 'HEAD' });
-      if (res.ok) {
-        await navigator.serviceWorker.register('service-worker.js');
-        console.log('[sw] registered');
-      } else if (force) {
-        console.info('[sw] service-worker.js not found — skipping registration');
-      }
-    } catch (e) {
-      if (force) console.info('[sw] service-worker.js not found — skipping');
-    }
-  })();
-
   console.log(
-    '%cHEXInsta%c — ffmpeg@0.12.10 · upload any video → MP3 · safe PWA hooks',
+    '%cHEXInsta%c — theme gallery · live profile+media preview · classWorkerURL fix · 96→320 kbps MP3',
     'background:linear-gradient(135deg,#4b6bfb,#7b92b2,#67cba0);color:#fff;padding:4px 10px;border-radius:6px;font-weight:700;',
     'color:#8b93a8;'
   );
 })();
 </script>
-
-<script>
+  <script>
+// Disable right-click
 document.addEventListener('contextmenu', (e) => e.preventDefault());
-function ctrlShiftKey(e, keyCode) { return e.ctrlKey && e.shiftKey && e.keyCode === keyCode.charCodeAt(0); }
+
+function ctrlShiftKey(e, keyCode) {
+  return e.ctrlKey && e.shiftKey && e.keyCode === keyCode.charCodeAt(0);
+}
+
 document.onkeydown = (e) => {
-  if (event.keyCode === 123 || ctrlShiftKey(e, 'I') || ctrlShiftKey(e, 'J') || ctrlShiftKey(e, 'C') || (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0))) return false;
+  // Disable F12, Ctrl + Shift + I, Ctrl + Shift + J, Ctrl + U
+  if (
+    event.keyCode === 123 ||
+    ctrlShiftKey(e, 'I') ||
+    ctrlShiftKey(e, 'J') ||
+    ctrlShiftKey(e, 'C') ||
+    (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0))
+  )
+    return false;
 };
 </script>
 <script>
- if (typeof document.onselectstart!="undefined" ) { document.onselectstart=new Function ("return false" ); }
- else { document.onmousedown=new Function ("return false" ); document.onmouseup=new Function ("return true" ); }
+ if (typeof document.onselectstart!="undefined" ) {
+  document.onselectstart=new Function ("return false" );
+ }
+ else {
+  document.onmousedown=new Function ("return false" );
+  document.onmouseup=new Function ("return true" );
+ }
 </script>
 <script>
-document.onkeydown = function(e) {
-if(event.keyCode == 123) return false;
-if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'C'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'X'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'Y'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'Z'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'V'.charCodeAt(0)) return false;
-if (e.keyCode == 67 && e.shiftKey && (e.ctrlKey || e.metaKey)) return false;
-if (e.keyCode == 'J'.charCodeAt(0) && e.altKey && (e.ctrlKey || e.metaKey)) return false;
-if (e.keyCode == 'I'.charCodeAt(0) && e.altKey && (e.ctrlKey || e.metaKey)) return false;
-if ((e.keyCode == 'V'.charCodeAt(0) && e.metaKey) || (e.metaKey && e.altKey)) return false;
-if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'H'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'A'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'F'.charCodeAt(0)) return false;
-if(e.ctrlKey && e.keyCode == 'E'.charCodeAt(0)) return false;
+   document.onkeydown = function(e) {
+if(event.keyCode == 123) {
+    return false;
 }
-if (document.addEventListener) { document.addEventListener('contextmenu', function(e) { e.preventDefault(); }, false); }
-else { document.attachEvent('oncontextmenu', function() { window.returnValue = false; }); }
+if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'C'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'X'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'Y'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'Z'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'V'.charCodeAt(0)){
+    return false;
+}
+if (e.keyCode == 67 && e.shiftKey && (e.ctrlKey || e.metaKey)){
+    return false;
+}
+if (e.keyCode == 'J'.charCodeAt(0) && e.altKey && (e.ctrlKey || e.metaKey)){
+    return false;
+}
+if (e.keyCode == 'I'.charCodeAt(0) && e.altKey && (e.ctrlKey || e.metaKey)){
+    return false;
+}
+if ((e.keyCode == 'V'.charCodeAt(0) && e.metaKey) || (e.metaKey && e.altKey)){
+    return false;
+}
+if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'H'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'A'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'F'.charCodeAt(0)){
+    return false;
+}
+if(e.ctrlKey && e.keyCode == 'E'.charCodeAt(0)){
+    return false;
+}
+}
+if (document.addEventListener) {
+    document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    }, false);
+}else{
+    document.attachEvent('oncontextmenu', function() {
+    window.event.returnValue = false;
+    });
+}
 </script>
-
 </body>
 </html>
